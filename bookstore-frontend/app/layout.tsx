@@ -14,6 +14,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
             <nav className="flex gap-4">
               <a href="/authors" className="hover:underline">Autores</a>
               <a href="/authors/new" className="hover:underline">Crear Autor</a>
+              <a href="/books" className="hover:underline">Libros</a>
             </nav>
           </div>
         </header>
