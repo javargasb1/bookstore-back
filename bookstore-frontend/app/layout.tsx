@@ -1,8 +1,12 @@
 // app/layout.tsx
 import './globals.css'
 import type { Metadata } from 'next'
+import Link from 'next/link' // 👈 usa Link de Next
 
-export const metadata: Metadata = { title: 'Bookstore CRUD', description: 'Preparcial Next.js' }
+export const metadata: Metadata = {
+  title: 'Bookstore CRUD',
+  description: 'Preparcial Next.js + TypeScript',
+}
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
@@ -12,9 +16,9 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
           <div className="mx-auto max-w-6xl px-4 py-4 flex items-center justify-between">
             <h1 className="text-xl font-bold">Bookstore CRUD</h1>
             <nav className="flex gap-4">
-              <a href="/authors" className="hover:underline">Autores</a>
-              <a href="/authors/new" className="hover:underline">Crear Autor</a>
-              <a href="/books" className="hover:underline">Libros</a>
+              <Link href="/authors" className="hover:underline">Autores</Link>
+              <Link href="/authors/new" className="hover:underline">Crear Autor</Link>
+              <Link href="/books" className="hover:underline">Libros</Link>
             </nav>
           </div>
         </header>

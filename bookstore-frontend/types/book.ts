@@ -1,17 +1,35 @@
-export interface Book {
-  id: number;
-  title: string;
-  image: string;
-  description: string;
-  publicationDate: string; // YYYY-MM-DD
-}
-export type BookInput = Omit<Book, 'id'>;
+import type { Editorial } from './author'
 
 export interface Review {
   id: number;
-  title: string;
-  content: string;
-  rating: number;   // 1..5
-  createdAt: string; // ISO
+  name: string;
+  source: string;
+  description: string;
 }
-export type ReviewInput = Omit<Review, 'id' | 'createdAt'>;
+
+export interface Book {
+  id: number;
+  name: string;
+  isbn: string;
+  image: string;
+  publishingDate: string;
+  description: string;
+  editorial: Editorial;
+  reviews?: Review[];
+  authors?: { id: number; birthDate: string; name: string; description: string; image: string }[];
+}
+
+export type NewReviewInput = {
+  name: string;
+  source: string;
+  description: string;
+};
+
+export type NewBookFormInput = {
+  name: string;
+  isbn: string;
+  image: string;
+  publishingDate: string;
+  description: string;
+  editorialId: number;
+};

@@ -1,0 +1,28 @@
+services:
+  api:
+    build:
+      context: .
+    container_name: bookstore_api
+    ports:
+      - "127.0.0.1:8080:8080"
+    networks: [appnet]
+
+  web:
+    build:
+      context: ./bookstore-frontend
+      args:
+        # 👇 esto se inyecta en el build de Next (cliente)
+        NEXT_PUBLIC_API_BASE: http://localhost:8080
+    container_name: bookstore_web
+    ports:
+      - "127.0.0.1:3000:3000"
+    environment:
+      # 👇 opcional (para SSR/logs); igual usa localhost
+      NEXT_PUBLIC_API_BASE: http://localhost:8080
+      NODE_ENV: production
+    depends_on: [api]
+    networks: [appnet]
+
+networks:
+  appnet:
+    driver: bridge

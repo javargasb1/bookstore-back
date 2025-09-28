@@ -1,35 +1,47 @@
+// lib/books.ts
 import { API_BASE } from './api'
-import type { Book, BookInput, Review, ReviewInput } from '@/types/book'
+import type { Book, Review, NewReviewInput, NewBookFormInput } from '@/types/book'
 
 export async function listBooks(): Promise<Book[]> {
-  const r = await fetch(`${API_BASE}/books`);
-  if (!r.ok) throw new Error(`Error ${r.status} listando libros`);
-  return r.json();
+  const r = await fetch(`${API_BASE}/api/books`, { cache: 'no-store' })
+  if (!r.ok) throw new Error(await r.text())
+  return r.json() as Promise<Book[]>
 }
 
-export async function getBook(id: number): Promise<Book & { reviews?: Review[] }> {
-  const r = await fetch(`${API_BASE}/books/${id}`);
-  if (!r.ok) throw new Error(`Error ${r.status} cargando libro`);
-  return r.json();
+export async function getBook(id: number): Promise<Book> {
+  const r = await fetch(`${API_BASE}/api/books/${id}`, { cache: 'no-store' })
+  if (!r.ok) throw new Error(await r.text())
+  return r.json() as Promise<Book>
 }
 
-export async function createBook(input: BookInput): Promise<Book> {
-  const r = await fetch(`${API_BASE}/books`, {
-    method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(input)
-  });
-  if (!r.ok) throw new Error(await r.text().catch(()=> 'Error creando libro'));
-  return r.json();
+type CreateBookPayload = Omit<NewBookFormInput, 'editorialId'> & {
+  editorial: { id: number };
+};
+
+export async function createBook(input: NewBookFormInput): Promise<Book> {
+  const { editorialId, ...rest } = input;
+  const body: CreateBookPayload = { ...rest, editorial: { id: editorialId } };
+
+  const r = await fetch(`${API_BASE}/api/books`, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify(body),
+  })
+  if (!r.ok) throw new Error(await r.text())
+  return r.json() as Promise<Book>
 }
 
-export async function linkBookToAuthor(authorId: number, bookId: number): Promise<void> {
-  const r = await fetch(`${API_BASE}/authors/${authorId}/books/${bookId}`, { method: 'POST' });
-  if (!r.ok) throw new Error(await r.text().catch(()=> 'Error asociando libro a autor'));
+export async function addReview(bookId: number, review: NewReviewInput): Promise<Review> {
+  const r = await fetch(`${API_BASE}/api/books/${bookId}/reviews`, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify(review),
+  })
+  if (!r.ok) throw new Error(await r.text())
+  return r.json() as Promise<Review>
 }
 
-export async function createReview(bookId: number, input: ReviewInput): Promise<Review> {
-  const r = await fetch(`${API_BASE}/books/${bookId}/reviews`, {
-    method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(input)
-  });
-  if (!r.ok) throw new Error(await r.text().catch(()=> 'Error creando review'));
-  return r.json();
+export async function deleteBook(bookId: number): Promise<void> {
+  const r = await fetch(`${API_BASE}/api/books/${bookId}`, { method: 'DELETE' })
+  if (!r.ok) throw new Error(await r.text())
 }

@@ -1,0 +1,8 @@
+# Evitar que el build del backend copie cosas pesadas o ajenas
+bookstore-frontend
+node_modules
+target
+.git
+.gitignore
+README.md
+*.log

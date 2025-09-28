@@ -1,18 +1,22 @@
 'use client'
 import { useAuthors } from '@/hooks/useAuthors'
+import { useBooks } from '@/hooks/useBooks'
 import AuthorCard from '@/components/AuthorCard'
 import { getErrorMessage } from '@/lib/errors'
 
 export default function AuthorsPage() {
   const { authors, loading, error, deleteAuthorById } = useAuthors();
+  const { removeAllBooksFromAuthor } = useBooks();
 
   const handleDelete = async (id: number) => {
-    const ok = confirm('¿Eliminar este autor?');
-    if (!ok) return;
+    if (!confirm('¿Eliminar este autor? Esto quitará/borrará sus libros asociados.')) return;
     try {
+      // 1) Limpiar relaciones/libros antes de borrar el autor
+      await removeAllBooksFromAuthor(id);
+      // 2) Borrar autor
       await deleteAuthorById(id);
     } catch (e: unknown) {
-      alert(getErrorMessage(e) || 'Error eliminando');
+      alert(getErrorMessage(e));
     }
   };
 
